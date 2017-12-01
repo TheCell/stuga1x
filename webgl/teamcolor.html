@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+	obj laden
+</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<style>
+	body
+	{
+		margin: 0px;
+		background-color: #AAA;
+		overflow: hidden;
+	}
+</style>
+</head>
+
+<body>
+<script src="js/three.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script type="x-shader/x-vertex" id="teamcolorVertexShader">
+	precision mediump float;
+
+	void main()
+	{
+		vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+		gl_Position = projectionMatrix * modelViewPosition;
+	}
+</script>
+<script type="x-shader/x-fragment" id="teamcolorFragmentShader">
+	precision mediump float;
+
+	void main()
+	{
+		gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	}
+</script>
+
+<script type="text/javascript">
+var aaCamera, aaScene, aaRenderer;
+var aaMesh, aaObject, aaObject2;
+var aaAmbient, aaLight, aaNullMaterial;
+var enableTurn = false;
+var turnX = 0.05;
+var turnY = 0.05;
+
+var moveX = false;
+var moveY = false;
+var moveZ = false;
+var moveXMinus = false;
+var moveYMinus = false;
+var moveZMinus = false;
+var moveSpeedX = 1;
+var moveSpeedY = 1;
+var moveSpeedZ = 1;
+var posXValue = 0;
+var posYValue = 0;
+var posZValue = 0;
+
+var teamColorMat = new THREE.ShaderMaterial({
+	vertexShader: document.getElementById("teamcolorVertexShader").textContent,
+	fragmentShader: document.getElementById("teamcolorFragmentShader").textContent
+});
+
+init();
+
+function init()
+{
+	//Perspektivische Kammera wird erstellt
+	aaCamera = new THREE.PerspectiveCamera( 36.666, window.innerWidth / window.innerHeight, 1, 1000 );
+	aaCamera.position.z = 0;
+	aaCamera.position.y = 0;
+
+	aaScene = new THREE.Scene();
+	var c = new THREE.Color(0xFF8822);
+	//Hintergrund Farbe wird gesetzt
+	aaScene.background = c;
+
+	aaAmbient = new THREE.AmbientLight( 0x505050 , 1.0);
+	aaScene.add(aaAmbient);
+	aaLight = new THREE.PointLight( 0xFFFFFF, 1.0, 0.0, 1.0);
+	aaLight.position.set(-300, 100, 200);
+	aaScene.add(aaLight);
+
+
+	var texture = new THREE.TextureLoader().load( 'img/singleshot.png' );
+	//horizontal und vertical Texturemapping, Die Textur wird unendlich offt wiederholt
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+	aaPanoMaterial = new THREE.MeshBasicMaterial( { map: texture } );
+	aaPanoMaterial.shading = THREE.SmoothShading;
+	//definiert welche Seite gerendert werden soll. Front,Back,Double
+	aaPanoMaterial.side = THREE.DoubleSide;
+
+	var objFile = "objects/zylinder.obj";
+	var loader = new THREE.OBJLoader();
+	loader.load( objFile, function( object )
+	{
+		aaObject = object;
+		aaObject.scale.set(1, 1, 1);
+		aaObject.children[0].material = aaPanoMaterial;
+		aaScene.add( aaObject );
+	} );
+
+	var obj2 = "objects/test.obj";
+	var testMaterial = new THREE.MeshLambertMaterial();
+	testMaterial.color = new THREE.Color( 0x00ff00 );
+	testMaterial.side = THREE.DoubleSide;
+	loader.load( obj2, function( object )
+	{
+		aaObject2 = object;
+		aaObject2.scale.set(.043, .043, .043);
+		aaObject2.position.y = -80;
+		aaObject2.children.forEach(function(child)
+		{
+			child.material = teamColorMat;
+		});
+		aaObject2.children[0].material = aaPanoMaterial;
+		aaScene.add( aaObject2 );
+	} );
+
+	aaRenderer = new THREE.WebGLRenderer( {sntialias:true} );
+	aaRenderer.setPixelRatio( window.devicePixelRatio );
+	aaRenderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( aaRenderer.domElement );
+
+	window.addEventListener( 'resize', onWindowResize, false );
+	window.addEventListener( 'keydown', onKeyPressed, false );
+	window.addEventListener( 'keyup', onKeyUp, false );
+	window.addEventListener( 'mouseup', onMouseUp, false );
+	window.addEventListener( 'mousemove', onMouseMove, false );
+	window.addEventListener( 'mousedown', onMouseDown, false );
+	window.addEventListener( 'mouseup', onMouseUp, false );
+
+	// start the render loop
+	animate();
+}
+
+function onWindowResize()
+{
+	aaCamera.aspect = window.innerWidth / window.innerHeight;
+	aaCamera.updateProjectionMatrix();
+	aaRenderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function onKeyPressed(event)
+{
+	switch(event.keyCode)
+	{
+		case 87: //W
+			moveZMinus = true;
+		break;
+		case 65: //A
+			moveXMinus = true;
+		break;
+		case 83: //S
+			moveZ = true;
+		break;
+		case 68: //D
+			moveX = true;
+		break;
+		case 32: //space
+			moveY = true;
+		break;
+		case 16: //shiftleft
+			moveYMinus = true;
+		break;
+	}
+}
+
+function onKeyUp(event)
+{
+	switch(event.keyCode)
+	{
+		case 87: //W
+			moveZMinus = false;
+		break;
+		case 65: //A
+			moveXMinus = false;
+		break;
+		case 83: //S
+			moveZ = false;
+		break;
+		case 68: //D
+			moveX = false;
+		break;
+		case 32: //space
+			moveY = false;
+		break;
+		case 16: //shiftleft
+			moveYMinus = false;
+		break;
+	}
+}
+
+function animate()
+{
+	requestAnimationFrame( animate );
+	aaRenderer.render( aaScene, aaCamera );
+
+	if(moveX)
+	{
+		posXValue += moveSpeedX;
+	}
+	if(moveY)
+	{
+		posYValue += moveSpeedY;
+	}
+	if(moveZ)
+	{
+		posZValue += moveSpeedZ;
+	}
+	if(moveXMinus)
+	{
+		posXValue -= moveSpeedX;
+	}
+	if(moveYMinus)
+	{
+		posYValue -= moveSpeedY;
+	}
+	if(moveZMinus)
+	{
+		posZValue -= moveSpeedZ;
+	}
+
+	aaCamera.rotation.x = turnX;
+	aaCamera.rotation.y = turnY;
+	aaCamera.rotation.z = 0;
+
+	aaCamera.position.x = posXValue;
+	aaCamera.position.y = posYValue;
+	aaCamera.position.z = posZValue;
+}
+
+function onMouseMove( event )
+{
+	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+	if (enableTurn == true)
+	{
+		// yes they are inverted and this needs to be
+		turnX += movementY * -0.002;
+		turnY += movementX * -0.002;
+	}
+}
+
+function onMouseDown( event ) { enableTurn = true; }
+function onMouseUp  ( event ) { enableTurn = false; }
+
+/*
+var customMaterial = new THREE.ShaderMaterial(
+{
+
+	uniforms:
+	{
+
+		time: { value: 1.0 },
+		resolution: { value: new THREE.Vector2() }
+
+	},
+
+	vertexShader: document.getElementById( 'customMaterialVertexShader' ).textContent,
+	fragmentShader: document.getElementById( 'customMaterialFragmentShader' ).textContent
+} );
+*/
+</script>
+</body>
+</html>
