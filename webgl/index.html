@@ -2,10 +2,17 @@
 <html>
 <head>
 <title>
-	obj laden
+	Shader Scene
 </title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta charset="utf-8" />
+<meta
+	name="viewport"
+	content="width=device-width,
+		user-scalable=no,
+		minimum-scale=1.0,
+		maximum-scale=1.0"
+/>
+
 <style>
 	body
 	{
@@ -19,81 +26,132 @@
 <body>
 <script src="js/three.js"></script>
 <script src="js/OBJLoader.js"></script>
+<script type="x-shader/x-vertex" id="teamcolorVertexShader">
+	precision mediump float;
 
-<script>
+	void main()
+	{
+		vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+		gl_Position = projectionMatrix * modelViewPosition;
+	}
+</script>
+<script type="x-shader/x-fragment" id="teamcolorFragmentShader">
+	precision mediump float;
 
-var aaCamera, aaScene, aaRenderer;
-var aaMesh, aaObject, aaObject2;
-var aaAmbient, aaLight, aaNullMaterial;
-var moveX,moveY,moveZ;
-var moveSpeedX,moveSpeedY,moveSpeedZ;
-var posXValue, posYValue, posZValue;
-var enableTurn = false;
-var turnX = 0.05;
-var turnY = 0.05;
+	void main()
+	{
+		gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	}
+</script>
 
+<script type="text/javascript">
+"use strict";
+
+let ambientLight, pointLight;
+let userCamera;
+let shaderExampleScene;
+let shaderExampleRenderer;
+let moveX,moveY,moveZ;
+let moveSpeedX = 1;
+let moveSpeedY = 1;
+let moveSpeedZ = 1;
+let posXValue = -4;
+let posYValue = 2;
+let posZValue = 7;
+let moveXMinus, moveYMinus, moveZMinus;
+let enableTurn = false;
+let enableTurnCamera = false;
+let turnX = 0.00;
+let turnY = -1.5;
+let turnZ = 0.00;
+let panoXTurn = 3.14;
+
+let raycaster;
+let mouse;
+let objects = []; // all objects that are interactable;
+let debugMode = true;
+
+var teamColorMat = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent
+	}
+);
 
 init();
 
 function init()
 {
 	//Perspektivische Kammera wird erstellt
-	aaCamera = new THREE.PerspectiveCamera( 36.666, window.innerWidth / window.innerHeight, 1, 1000 );
-	aaCamera.position.z = 0;
-	aaCamera.position.y = 0;
+	userCamera = new THREE.PerspectiveCamera(
+		80,
+		window.innerWidth / window.innerHeight,
+		1,
+		1000
+	);
+	userCamera.rotation.order = 'YXZ';
 
-	aaScene = new THREE.Scene();
-	var c = new THREE.Color(0xFF8822);
-	//Hintergrund Farbe wird gesetzt
-	aaScene.background = c;
+	// Scene erstellen
+	shaderExampleScene = new THREE.Scene();
 
-	aaAmbient = new THREE.AmbientLight( 0x505050 , 1.0);
-	aaScene.add(aaAmbient);
-	aaLight = new THREE.PointLight( 0xFFFFFF, 1.0, 0.0, 1.0);
-	aaLight.position.set(-300, 100, 200);
-	aaScene.add(aaLight);
+	// Hintergrund Farbe wird gesetzt
+	let backgroundColor = new THREE.Color(0x5060AA);
+	shaderExampleScene.background = backgroundColor;
 
+	// add Lightsources
+	ambientLight = new THREE.AmbientLight( 0x505050 , 1.0);
+	shaderExampleScene.add(ambientLight);
+	pointLight = new THREE.PointLight( 0xFFFFFF, 1.0, 0.0, 1.0);
+	pointLight.position.set(-300, 100, 200);
+	shaderExampleScene.add(pointLight);
 
-	var texture = new THREE.TextureLoader().load( 'img/singleshot.png' );
-	//horizontal und vertical Texturemapping, Die Textur wird unendlich offt wiederholt
-	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	if (debugMode)
+	{
+		let AxisHelper = new THREE.AxisHelper(500);
+		shaderExampleScene.add( AxisHelper );
+	}
 
-	aaPanoMaterial = new THREE.MeshBasicMaterial( { map: texture } );
-	aaPanoMaterial.shading = THREE.SmoothShading;
-	//definiert welche Seite gerendert werden soll. Front,Back,Double
-	aaPanoMaterial.side = THREE.DoubleSide;
-
-	var objFile = "objects/zylinder.obj";
-	var loader = new THREE.OBJLoader();
+	let objFile = "objects/3D assets/metalTileLarge.obj";
+	let loader = new THREE.OBJLoader();
 	loader.load( objFile, function( object )
 	{
-		aaObject = object;
-		aaObject.scale.set(1, 1, 1);
-		aaObject.children[0].material = aaPanoMaterial;
-		aaScene.add( aaObject );
-	} );
-
-	var obj2 = "objects/test.obj";
-	var testMaterial = new THREE.MeshLambertMaterial();
-	testMaterial.color = new THREE.Color( 0x00ff00 );
-	testMaterial.side = THREE.DoubleSide;
-	loader.load( obj2, function( object )
-	{
-		aaObject2 = object;
-		aaObject2.scale.set(.043, .043, .043);
-		aaObject2.position.y = -80;
-		aaObject2.children.forEach(function(child)
+		object.children.forEach( function (obj, index)
 		{
-			child.material = testMaterial;
+			obj.material = teamColorMat;
+			obj.position.x = 25;
+			objects.push( obj );
 		});
-		aaObject2.children[0].material = aaPanoMaterial;
-		aaScene.add( aaObject2 );
-	} );
 
-	aaRenderer = new THREE.WebGLRenderer( {sntialias:true} );
-	aaRenderer.setPixelRatio( window.devicePixelRatio );
-	aaRenderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( aaRenderer.domElement );
+		shaderExampleScene.add(object);
+	});
+
+	if (debugMode)
+	{
+		let geometry = new THREE.BoxGeometry( 1, 1, 1 );
+		let material = new THREE.MeshLambertMaterial( { color: 'green' } );
+		let cube = new THREE.Mesh( geometry, material );
+		cube.position.z = 2;
+		shaderExampleScene.add(cube);
+		objects.push( cube );
+
+		let geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
+		let cube2 = new THREE.Mesh( geometry, teamColorMat );
+		cube2.position.z = 4;
+		shaderExampleScene.add(cube2);
+		objects.push( cube2 );
+	}
+
+	// setup renderer
+	shaderExampleRenderer = new THREE.WebGLRenderer( {antialias: true} );
+	shaderExampleRenderer.setPixelRatio( window.devicePixelRatio );
+	shaderExampleRenderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( shaderExampleRenderer.domElement );
 
 	moveX = false;
 	moveY = false;
@@ -101,29 +159,28 @@ function init()
 	moveXMinus = false;
 	moveYMinus = false;
 	moveZMinus = false;
-	moveSpeedX = 1;
-	moveSpeedY = 1;
-	moveSpeedZ = 1;
-	posXValue = 0;
-	posYValue = 0;
-	posZValue = 0;
+
+	raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
 
 	window.addEventListener( 'resize', onWindowResize, false );
 	window.addEventListener( 'keydown', onKeyPressed, false );
 	window.addEventListener( 'keyup', onKeyUp, false );
-	window.addEventListener( 'mouseup',   onMouseUp, false );
+	window.addEventListener( 'mouseup', onMouseUp, false );
 	window.addEventListener( 'mousemove', onMouseMove, false );
 	window.addEventListener( 'mousedown', onMouseDown, false );
 	window.addEventListener( 'mouseup', onMouseUp, false );
+	window.addEventListener( 'contextmenu', onContextMenu, false );
 
+	// start the render loop
 	animate();
 }
 
 function onWindowResize()
 {
-	aaCamera.aspect = window.innerWidth / window.innerHeight;
-	aaCamera.updateProjectionMatrix();
-	aaRenderer.setSize( window.innerWidth, window.innerHeight );
+	userCamera.aspect = window.innerWidth / window.innerHeight;
+	userCamera.updateProjectionMatrix();
+	shaderExampleRenderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function onKeyPressed(event)
@@ -131,16 +188,16 @@ function onKeyPressed(event)
 	switch(event.keyCode)
 	{
 		case 87://W
-			moveZMinus = true;
+			moveX = true;
 		break;
 		case 65://A
-			moveXMinus = true;
+			moveZMinus = true;
 		break;
 		case 83://S
-			moveZ = true;
+			moveXMinus = true;
 		break;
 		case 68://D
-			moveX = true;
+			moveZ = true;
 		break;
 		case 32://space
 			moveY = true;
@@ -156,16 +213,16 @@ function onKeyUp(event)
 	switch(event.keyCode)
 	{
 		case 87://W
-			moveZMinus = false;
+			moveX = false;
 		break;
 		case 65://A
-			moveXMinus = false;
+			moveZMinus = false;
 		break;
 		case 83://S
-			moveZ = false;
+			moveXMinus = false;
 		break;
 		case 68://D
-			moveX = false;
+			moveZ = false;
 		break;
 		case 32://space
 			moveY = false;
@@ -178,47 +235,60 @@ function onKeyUp(event)
 
 function animate()
 {
+	shaderExampleRenderer.render( shaderExampleScene, userCamera );
+
+	if (debugMode)
+	{
+		if(moveX)
+		{
+			posXValue += moveSpeedX;
+		}
+		if(moveY)
+		{
+			posYValue += moveSpeedY;
+		}
+		if(moveZ)
+		{
+			posZValue += moveSpeedZ;
+		}
+		if(moveXMinus)
+		{
+			posXValue -= moveSpeedX;
+		}
+		if(moveYMinus)
+		{
+			posYValue -= moveSpeedY;
+		}
+		if(moveZMinus)
+		{
+			posZValue -= moveSpeedZ;
+		}
+	}
+
+	userCamera.rotation.x = turnX;
+	userCamera.rotation.y = turnY;
+	userCamera.rotation.z = turnZ;
+
+	if (debugMode)
+	{
+		userCamera.position.x = posXValue;
+		userCamera.position.y = posYValue;
+		userCamera.position.z = posZValue;
+	}
+
 	requestAnimationFrame( animate );
-	aaRenderer.render( aaScene, aaCamera );
-
-	if(moveX)
-	{
-		posXValue += moveSpeedX;
-	}
-	if(moveY)
-	{
-		posYValue += moveSpeedY;
-	}
-	if(moveZ)
-	{
-		posZValue += moveSpeedZ;
-	}
-	if(moveXMinus)
-	{
-		posXValue -= moveSpeedX;
-	}
-	if(moveYMinus)
-	{
-		posYValue -= moveSpeedY;
-	}
-	if(moveZMinus)
-	{
-		posZValue -= moveSpeedZ;
-	}
-
-	aaCamera.rotation.x = turnX;
-	aaCamera.rotation.y = turnY;
-	aaCamera.rotation.z = 0;
-
-	aaCamera.position.x = posXValue;
-	aaCamera.position.y = posYValue;
-	aaCamera.position.z = posZValue;
 }
 
 function onMouseMove( event )
 {
-	var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-	var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+	let movementX = event.movementX
+		|| event.mozMovementX
+		|| event.webkitMovementX
+		|| 0;
+	let movementY = event.movementY
+		|| event.mozMovementY
+		|| event.webkitMovementY
+		|| 0;
 
 	if (enableTurn == true)
 	{
@@ -229,24 +299,67 @@ function onMouseMove( event )
 }
 
 function onMouseDown( event ) { enableTurn = true; }
-function onMouseUp  ( event ) { enableTurn = false; }
 
-/*
-var customMaterial = new THREE.ShaderMaterial(
+function onMouseUp  ( event )
 {
+	enableTurn = false;
+	enableTurnCamera = false;
+}
 
-	uniforms:
+function onContextMenu ( event ){ event.preventDefault();}
+
+function onMouseMove( event )
+{
+		let movementX = event.movementX
+			|| event.mozMovementX
+			|| event.webkitMovementX
+			|| 0;
+		let movementY = event.movementY
+			|| event.mozMovementY
+			|| event.webkitMovementY
+			|| 0;
+
+		if (enableTurnCamera == true)
+		{
+			// yes they are inverted and this needs to be
+			turnX += movementY * -0.0035;
+			turnY += movementX * -0.005;
+		}
+		if(enableTurn == true)
+		{
+			panoXTurn += movementX * -0.002;
+		}
+}
+
+function onMouseDown( event )
+{
+	let isRightMb;
+	if("which" in event){isRightMb = event.which == 3}
+	else if("button" in event){isRightMb = event.button == 2}
+	if(!isRightMb){enableTurn = true;}
+	else{ enableTurnCamera = true;}
+}
+
+function onClick  ( event )
+{
+	mouse.x = (
+		event.clientX / shaderExampleRenderer.domElement.clientWidth
+		) * 2 - 1;
+	mouse.y = - (
+		event.clientY / shaderExampleRenderer.domElement.clientHeight
+		) * 2 + 1;
+
+	raycaster.setFromCamera( mouse, userCamera );
+	var intersects = raycaster.intersectObjects( objects );
+	if ( intersects.length > 0 )
 	{
-
-		time: { value: 1.0 },
-		resolution: { value: new THREE.Vector2() }
-
-	},
-
-	vertexShader: document.getElementById( 'customMaterialVertexShader' ).textContent,
-	fragmentShader: document.getElementById( 'customMaterialFragmentShader' ).textContent
-} );
-*/
+		switch(intersects[0].object.name)
+		{
+			default:
+			break;
+		}
+	}
+}
 </script>
 </body>
 </html>
