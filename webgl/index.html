@@ -117,14 +117,15 @@ function init()
 		shaderExampleScene.add( AxisHelper );
 	}
 
-	let objFile = "objects/3D assets/metalTileLarge.obj";
+	let objFile = "objects/customObjs/knight/Myknight.obj";
 	let loader = new THREE.OBJLoader();
 	loader.load( objFile, function( object )
 	{
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = teamColorMat;
-			obj.position.x = 25;
+			obj.position.x = 5;
+			obj.position.z = 5;
 			objects.push( obj );
 		});
 
