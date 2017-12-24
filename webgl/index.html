@@ -28,19 +28,30 @@
 <script src="js/OBJLoader.js"></script>
 <script type="x-shader/x-vertex" id="teamcolorVertexShader">
 	precision mediump float;
+	varying vec2 vUv;
 
 	void main()
 	{
+		vUv = uv;
 		vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
 		gl_Position = projectionMatrix * modelViewPosition;
 	}
 </script>
 <script type="x-shader/x-fragment" id="teamcolorFragmentShader">
 	precision mediump float;
+	uniform sampler2D textureKnight;
+
+	varying vec2 vUv;
 
 	void main()
 	{
-		gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+		vec4 fragColor = texture2D(textureKnight, vUv);
+		if (fragColor.a < 0.5)
+		{
+			fragColor.rgb = vec3(1.0, 1.0, 0.0);
+		}
+		gl_FragColor = fragColor;
+		// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 </script>
 
@@ -71,6 +82,14 @@ let mouse;
 let objects = []; // all objects that are interactable;
 let debugMode = true;
 
+let knightUniforms = {
+		textureKnight:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/knight/Myknight.png")}
+	};
 var teamColorMat = new THREE.ShaderMaterial(
 	{
 		vertexShader:
@@ -80,7 +99,8 @@ var teamColorMat = new THREE.ShaderMaterial(
 		fragmentShader:
 			document
 			.getElementById("teamcolorFragmentShader")
-			.textContent
+			.textContent,
+		uniforms: knightUniforms
 	}
 );
 
