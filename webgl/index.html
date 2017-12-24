@@ -46,10 +46,9 @@
 	void main()
 	{
 		vec4 fragColor = texture2D(textureKnight, vUv);
-		if (fragColor.a < 0.5)
-		{
-			fragColor.rgb = vec3(1.0, 1.0, 0.0);
-		}
+		fragColor.r = fragColor.r * fragColor.a + 1.0 * ( 1.0 - fragColor.a);
+		fragColor.g = fragColor.g * fragColor.a + 0.0 * ( 1.0 - fragColor.a);
+		fragColor.b = fragColor.b * fragColor.a + 1.0 * ( 1.0 - fragColor.a);
 		gl_FragColor = fragColor;
 		// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
