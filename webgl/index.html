@@ -40,15 +40,16 @@
 <script type="x-shader/x-fragment" id="teamcolorFragmentShader">
 	precision mediump float;
 	uniform sampler2D textureKnight;
+	uniform vec3 teamcolor;
 
 	varying vec2 vUv;
 
 	void main()
 	{
 		vec4 fragColor = texture2D(textureKnight, vUv);
-		fragColor.r = fragColor.r * fragColor.a + 1.0 * ( 1.0 - fragColor.a);
-		fragColor.g = fragColor.g * fragColor.a + 0.0 * ( 1.0 - fragColor.a);
-		fragColor.b = fragColor.b * fragColor.a + 1.0 * ( 1.0 - fragColor.a);
+		fragColor.r = fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
+		fragColor.g = fragColor.g * fragColor.a + teamcolor.g * ( 1.0 - fragColor.a);
+		fragColor.b = fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
 		gl_FragColor = fragColor;
 		// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
@@ -87,7 +88,12 @@ let knightUniforms = {
 			type: "t",
 			value: THREE
 				.ImageUtils
-				.loadTexture("objects/customObjs/knight/Myknight.png")}
+				.loadTexture("objects/customObjs/knight/Myknight.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(0xff6c5d)
+		}
 	};
 var teamColorMat = new THREE.ShaderMaterial(
 	{
