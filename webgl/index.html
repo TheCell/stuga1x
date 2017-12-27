@@ -26,6 +26,8 @@
 <body>
 <script src="js/three.js"></script>
 <script src="js/OBJLoader.js"></script>
+<script type="text/javascript" src="js/dat.gui.min.js"></script>
+<script type="text/javascript" src="js/options.js"></script>
 <script type="x-shader/x-vertex" id="teamcolorVertexShader">
 	precision mediump float;
 	varying vec2 vUv;
@@ -82,7 +84,7 @@ let mouse;
 let objects = []; // all objects that are interactable;
 let debugMode = true;
 
-let knightUniforms = {
+let team1knightUniforms = {
 		textureKnight:
 		{
 			type: "t",
@@ -92,10 +94,11 @@ let knightUniforms = {
 		},
 		teamcolor:
 		{
-			value: new THREE.Color(0xff6c5d)
+			value: new THREE.Color(options.teamcolor1)
 		}
 	};
-var teamColorMat = new THREE.ShaderMaterial(
+
+let team1KnightMaterial = new THREE.ShaderMaterial(
 	{
 		vertexShader:
 			document
@@ -105,7 +108,37 @@ var teamColorMat = new THREE.ShaderMaterial(
 			document
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
-		uniforms: knightUniforms
+		uniforms: team1knightUniforms,
+		// wireframe: true
+	}
+);
+
+let team2knightUniforms = {
+		textureKnight:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/knight/Myknight.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor2)
+		}
+	};
+
+let team2KnightMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team2knightUniforms,
+		// wireframe: true
 	}
 );
 
@@ -148,11 +181,44 @@ function init()
 	{
 		object.children.forEach( function (obj, index)
 		{
-			obj.material = teamColorMat;
+			// new THREE.Color(0xff6c5d)
+			obj.material = team1KnightMaterial;
 			obj.position.x = 5;
 			obj.position.z = 5;
+			obj.teamNumber = 1;
 			objects.push( obj );
 		});
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2KnightMaterial;
+			obj.position.x = 5;
+			obj.position.z = 10;
+			obj.teamNumber = 2;
+			// console.log(obj.material.uniforms.teamcolor);
+			// obj.material.uniforms.teamcolor = new THREE.Color(0x49CC36);
+			// console.log(obj.material.uniforms.teamcolor);
+			// obj.material.teamcolor = new THREE.Color(0x49CC36);
+			// obj.onBeforeRender = function (renderer,
+			// 	scene,
+			// 	camera,
+			// 	geometry,
+			// 	material,
+			// 	group)
+			// {
+			// 	console.log(material);
+			// 	console.log(material.teamcolor);
+			// 	material.uniforms.teamcolor = material.teamcolor;
+			// }
+
+			objects.push( obj );
+		});
+
 
 		shaderExampleScene.add(object);
 	});
@@ -167,10 +233,16 @@ function init()
 		objects.push( cube );
 
 		let geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
-		let cube2 = new THREE.Mesh( geometry, teamColorMat );
+		let cube2 = new THREE.Mesh( geometry, team1KnightMaterial );
 		cube2.position.z = 4;
 		shaderExampleScene.add(cube2);
 		objects.push( cube2 );
+
+		let geometry3 = new THREE.BoxGeometry( 1, 1, 1 );
+		let cube3 = new THREE.Mesh( geometry, team2KnightMaterial );
+		cube3.position.z = 6;
+		shaderExampleScene.add(cube3);
+		objects.push( cube3 );
 	}
 
 	// setup renderer
