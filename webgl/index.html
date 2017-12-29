@@ -69,13 +69,13 @@ let moveSpeedX = 1;
 let moveSpeedY = 1;
 let moveSpeedZ = 1;
 let posXValue = -4;
-let posYValue = 2;
-let posZValue = 7;
+let posYValue = 9;
+let posZValue = 2;
 let moveXMinus, moveYMinus, moveZMinus;
 let enableTurn = false;
 let enableTurnCamera = false;
-let turnX = 0.00;
-let turnY = -1.5;
+let turnX = -0.60;
+let turnY = -2.00;
 let turnZ = 0.00;
 let panoXTurn = 3.14;
 
@@ -166,15 +166,40 @@ function init()
 	ambientLight = new THREE.AmbientLight( 0x505050 , 1.0);
 	shaderExampleScene.add(ambientLight);
 	pointLight = new THREE.PointLight( 0xFFFFFF, 1.0, 0.0, 1.0);
-	pointLight.position.set(-300, 100, 200);
+	pointLight.position.set(-50, 50, 50);
 	shaderExampleScene.add(pointLight);
+
+	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+	hemiLight.color.setHSL( 0.6, 1, 0.6 );
+	hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+	hemiLight.position.set( 0, 50, 0 );
+	shaderExampleScene.add( hemiLight );
 
 	if (debugMode)
 	{
+		let pointLightHelper = new THREE.PointLightHelper( pointLight, 10 );
+		shaderExampleScene.add( pointLightHelper );
+		let hemiLightHelper = new THREE.HemisphereLightHelper( hemiLight, 10 );
+		shaderExampleScene.add( hemiLightHelper );
 		let AxisHelper = new THREE.AxisHelper(500);
 		shaderExampleScene.add( AxisHelper );
 	}
 
+	// add floor
+	let groundGeo = new THREE.PlaneBufferGeometry( 10000, 10000 );
+	let groundMat = new THREE.MeshPhongMaterial(
+		{
+			color: 0xffffff,
+			specular: 0x050505
+		}
+	);
+	groundMat.color.setHSL( 0.095, 1, 0.75 );
+	let ground = new THREE.Mesh( groundGeo, groundMat );
+	ground.rotation.x = -Math.PI/2;
+	shaderExampleScene.add( ground );
+	ground.receiveShadow = true;
+
+	// add knights
 	let objFile = "objects/customObjs/knight/Myknight.obj";
 	let loader = new THREE.OBJLoader();
 	loader.load( objFile, function( object )
@@ -241,18 +266,21 @@ function init()
 		let material = new THREE.MeshLambertMaterial( { color: 'green' } );
 		let cube = new THREE.Mesh( geometry, material );
 		cube.position.z = 2;
+		cube.position.y = 1;
 		shaderExampleScene.add(cube);
 		objects.push( cube );
 
 		let geometry2 = new THREE.BoxGeometry( 1, 1, 1 );
 		let cube2 = new THREE.Mesh( geometry, team1KnightMaterial );
 		cube2.position.z = 4;
+		cube2.position.y = 1;
 		shaderExampleScene.add(cube2);
 		objects.push( cube2 );
 
 		let geometry3 = new THREE.BoxGeometry( 1, 1, 1 );
 		let cube3 = new THREE.Mesh( geometry, team2KnightMaterial );
 		cube3.position.z = 6;
+		cube3.position.y = 1;
 		shaderExampleScene.add(cube3);
 		objects.push( cube3 );
 	}
