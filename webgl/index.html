@@ -206,6 +206,35 @@ function init()
 		shaderExampleScene.add(object);
 	});
 
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team1KnightMaterial;
+			obj.position.x = 10;
+			obj.position.z = 5;
+			obj.teamNumber = 1;
+			objects.push( obj );
+		});
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2KnightMaterial;
+			obj.position.x = 10;
+			obj.position.z = 10;
+			obj.teamNumber = 2;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
 	if (debugMode)
 	{
 		let geometry = new THREE.BoxGeometry( 1, 1, 1 );

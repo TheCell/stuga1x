@@ -1,7 +1,7 @@
 let gui;
 let options =
 {
-	teamcolor1: "#ff00ff",
+	teamcolor1: "#ff9500",
 	teamcolor2: "#49CC36"
 }
 
