@@ -181,7 +181,6 @@ function init()
 	{
 		object.children.forEach( function (obj, index)
 		{
-			// new THREE.Color(0xff6c5d)
 			obj.material = team1KnightMaterial;
 			obj.position.x = 5;
 			obj.position.z = 5;
@@ -200,22 +199,6 @@ function init()
 			obj.position.x = 5;
 			obj.position.z = 10;
 			obj.teamNumber = 2;
-			// console.log(obj.material.uniforms.teamcolor);
-			// obj.material.uniforms.teamcolor = new THREE.Color(0x49CC36);
-			// console.log(obj.material.uniforms.teamcolor);
-			// obj.material.teamcolor = new THREE.Color(0x49CC36);
-			// obj.onBeforeRender = function (renderer,
-			// 	scene,
-			// 	camera,
-			// 	geometry,
-			// 	material,
-			// 	group)
-			// {
-			// 	console.log(material);
-			// 	console.log(material.teamcolor);
-			// 	material.uniforms.teamcolor = material.teamcolor;
-			// }
-
 			objects.push( obj );
 		});
 
