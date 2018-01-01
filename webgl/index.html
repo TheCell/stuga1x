@@ -32,13 +32,20 @@
 	precision mediump float;
 	varying vec2 vUv;
 	uniform int timeStamp;
+	uniform bool beamOff;
 
 	void main()
 	{
 		vUv = uv;
-		float posx = position.x * sin(mod(float(timeStamp) * 0.001, 3.0));
+		float posx = position.x;
 		float posy = position.y;
 		float posz = position.z;
+		if (beamOff)
+		{
+			posx = position.x * sin(mod(float(timeStamp) * 0.001, 3.0));
+			posz = position.z * sin(mod(float(timeStamp) * 0.001, 3.0));
+			posy = position.y * sin(mod(float(timeStamp) * 0.001, 3.0));
+		}
 		vec4 modelViewPosition = modelViewMatrix * vec4(posx, posy, posz, 1.0);
 		gl_Position = projectionMatrix * modelViewPosition;
 	}
@@ -48,15 +55,20 @@
 	uniform sampler2D textureKnight;
 	uniform vec3 teamcolor;
 	uniform int timeStamp;
+	uniform bool beamOff;
 
 	varying vec2 vUv;
 
 	void main()
 	{
 		vec4 fragColor = texture2D(textureKnight, vUv);
-		fragColor.r = fragColor.r * abs(sin(float(timeStamp) * 0.001) + 0.2);
-		fragColor.g = fragColor.g * abs(sin(float(timeStamp) * 0.001) + 0.2);
-		fragColor.b = fragColor.b * abs(sin(float(timeStamp) * 0.001) + 0.2);
+		// fragColor.r = fragColor.r * abs(sin(float(timeStamp) * 0.001) + 0.2);
+		// fragColor.g = fragColor.g * abs(sin(float(timeStamp) * 0.001) + 0.2);
+		// fragColor.b = fragColor.b * abs(sin(float(timeStamp) * 0.001) + 0.2);
+		if (beamOff)
+		{
+			fragColor.a = fragColor.a * abs(sin(float(timeStamp) * 0.001) + 0.2);
+		}
 		fragColor.r = fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
 		fragColor.g = fragColor.g * fragColor.a + teamcolor.g * ( 1.0 - fragColor.a);
 		fragColor.b = fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
@@ -110,6 +122,10 @@ let team1KnightUniforms = {
 		timeStamp:
 		{
 			value: Date.now()
+		},
+		beamOff:
+		{
+			value: true
 		}
 	};
 
@@ -143,6 +159,10 @@ let team2knightUniforms = {
 		timeStamp:
 		{
 			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
 		}
 	};
 
