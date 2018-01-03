@@ -43,9 +43,9 @@
 		float posz = position.z;
 		if (beamOff)
 		{
-			posx = position.x * sin(mod(float(timeStamp) * 0.001, 3.0));
-			posz = position.z * sin(mod(float(timeStamp) * 0.001, 3.0));
-			posy = position.y * sin(mod(float(timeStamp) * 0.001, 3.0)) * 1.5;
+			posx = position.x * (1.0 - beamOffTime);
+			posz = position.z * (1.0 - beamOffTime);
+			posy = position.y + position.y * beamOffTime * 1.5;
 		}
 		vec4 modelViewPosition = modelViewMatrix * vec4(posx, posy, posz, 1.0);
 		gl_Position = projectionMatrix * modelViewPosition;
@@ -69,7 +69,7 @@
 		// fragColor.b = fragColor.b * abs(sin(float(timeStamp) * 0.001) + 0.2);
 		if (beamOff)
 		{
-			fragColor.a = fragColor.a * abs(sin(float(timeStamp) * 0.001) + 0.2);
+			fragColor.a = fragColor.a * sin(1.0 - beamOffTime);
 		}
 		// interpolate teamcolor
 		fragColor.r = fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
@@ -132,6 +132,8 @@ let team1KnightUniforms = {
 		},
 		beamOffTime:
 		{
+			inProgress: false,
+			startTime: Date.now(),
 			value: 0.0
 		}
 	};
@@ -173,6 +175,8 @@ let team2knightUniforms = {
 		},
 		beamOffTime:
 		{
+			inProgress: false,
+			startTime: Date.now(),
 			value: 0.0
 		}
 	};
@@ -551,35 +555,41 @@ function onClick  ( event )
 	}
 }
 
-function startBeam( material, timeToLiveMS )
+function startBeam( object, timeToLiveMS )
 {
+	let currentTime = Date.now();
 	// set startvalues first time it is run
-	if (material.uniforms.beamOffTime.value == 0.0)
+	if (object.material.uniforms.beamOffTime.inProgress == false)
 	{
-		material.uniforms.beamOff.value = true;
-		material.uniforms.beamOffTime.startTime = Date.now();
-		material.uniforms.beamOffTime.value = 0.0;
+		object.material.uniforms.beamOffTime.inProgress = true;
+		object.material.uniforms.beamOff.value = true;
+		object.material.uniforms.beamOffTime.startTime = currentTime;
+		object.material.uniforms.beamOffTime.value = 0.0;
 	}
 
 	// stop if max is reached
-	console.log(Date.now() > material.uniforms.beamOffTime.startTime + timeToLiveMS);
-
-	if (Date.now() > material.uniforms.beamOffTime.startTime + timeToLiveMS)
+	if (currentTime > object.material.uniforms.beamOffTime.startTime + timeToLiveMS)
 	{
-		material.uniforms.beamOffTime.value = 0.0;
-		material.uniforms.beamOff.value = false;
+		object.material.uniforms.beamOffTime.inProgress = false;
+		object.material.uniforms.beamOffTime.value = 0.0;
+		object.material.uniforms.beamOff.value = false;
 		return;
 	}
 
 	// set current beamOffTime
-	material.uniforms.beamOffTime.value = Math.lerp(
+	/*
+	object.material.uniforms.beamOffTime.value = Math.lerp(
 		0.0,
 		Math.PI / 2,
-		material.uniforms.beamOffTime.startTime / timeToLiveMS);
+		(currentTime - object.material.uniforms.beamOffTime.startTime) / timeToLiveMS);
+	console.log((currentTime - object.material.uniforms.beamOffTime.startTime), timeToLiveMS);
+	*/
+
+	object.material.uniforms.beamOffTime.value = (currentTime - object.material.uniforms.beamOffTime.startTime) / timeToLiveMS;
 
 	setTimeout( function()
 	{
-		startBeam(material, timeToLiveMS);
+		startBeam(object, timeToLiveMS);
 	});
 }
 
