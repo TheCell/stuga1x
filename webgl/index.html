@@ -47,7 +47,11 @@
 			posz = position.z * (1.0 - beamOffTime);
 			posy = position.y + position.y * beamOffTime * 1.5;
 		}
-		vec4 modelViewPosition = modelViewMatrix * vec4(posx, posy, posz, 1.0);
+		vec4 modelViewPosition = modelViewMatrix * vec4(
+			posx,
+			posy,
+			posz,
+			1.0);
 		gl_Position = projectionMatrix * modelViewPosition;
 	}
 </script>
@@ -62,71 +66,23 @@
 
 	varying vec2 vUv;
 
-	// Perlin Noise
-	float rand(vec2 c)
-	{
-		return fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);
-	}
-
-	float noise(vec2 p, float freq )
-	{
-		// float unit = screenWidth/freq;
-		float unit = 100.0/freq;
-		vec2 ij = floor(p/unit);
-		vec2 xy = mod(p,unit)/unit;
-		//xy = 3.*xy*xy-2.*xy*xy*xy;
-		xy = .5*(1.-cos(M_PI*xy));
-		float a = rand((ij+vec2(0.,0.)));
-		float b = rand((ij+vec2(1.,0.)));
-		float c = rand((ij+vec2(0.,1.)));
-		float d = rand((ij+vec2(1.,1.)));
-		float x1 = mix(a, b, xy.x);
-		float x2 = mix(c, d, xy.x);
-		return mix(x1, x2, xy.y);
-	}
-
-	float pNoise(vec2 p, int res)
-	{
-		float persistance = .5;
-		float n = 0.;
-		float normK = 0.;
-		float f = 4.;
-		float amp = 1.;
-		int iCount = 0;
-		for (int i = 0; i<50; i++)
-		{
-			n+=amp*noise(p, f);
-			f*=2.;
-			normK+=amp;
-			amp*=persistance;
-			if (iCount == res) break;
-			iCount++;
-		}
-
-		float nf = n/normK;
-		return nf*nf*nf*nf;
-	}
-
 	void main()
 	{
 		vec4 fragColor = texture2D(textureKnight, vUv);
-		// fragColor.r = fragColor.r * abs(sin(float(timeStamp) * 0.001) + 0.2);
-		// fragColor.g = fragColor.g * abs(sin(float(timeStamp) * 0.001) + 0.2);
-		// fragColor.b = fragColor.b * abs(sin(float(timeStamp) * 0.001) + 0.2);
 		if (beamOff)
 		{
 			fragColor.a = fragColor.a * sin(1.0 - beamOffTime);
 		}
 		// interpolate teamcolor
-		fragColor.r = fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
-		fragColor.g = fragColor.g * fragColor.a + teamcolor.g * ( 1.0 - fragColor.a);
-		fragColor.b = fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
-		// fragColor.r = fragColor.r * (1.0 / 10.0 * mod(10.0, float(t)));
-		// fragColor.a = 1.0 - mod(float(timeStamp), 100.0);
+		fragColor.r =
+			fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
+		fragColor.g =
+			fragColor.g * fragColor.a + teamcolor.g * ( 1.0 - fragColor.a);
+		fragColor.b =
+			fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
 		fragColor.a = 1.0;
-		// fragColor.r = pNoise(vUv, 2000);
+
 		gl_FragColor = fragColor;
-		// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 </script>
 
@@ -182,6 +138,10 @@ let team1KnightUniforms = {
 			inProgress: false,
 			startTime: Date.now(),
 			value: 0.0
+		},
+		isHologramm:
+		{
+			value: false
 		}
 	};
 
@@ -225,6 +185,10 @@ let team2knightUniforms = {
 			inProgress: false,
 			startTime: Date.now(),
 			value: 0.0
+		},
+		isHologramm:
+		{
+			value: false
 		}
 	};
 
@@ -242,51 +206,6 @@ let team2KnightMaterial = new THREE.ShaderMaterial(
 		// wireframe: true
 	}
 );
-
-/*
-let team3knightUniforms = {
-		textureKnight:
-		{
-			type: "t",
-			value: THREE
-				.ImageUtils
-				.loadTexture("objects/customObjs/kenneyKnight/knightRedWithAlpha.png")
-		},
-		teamcolor:
-		{
-			value: new THREE.Color(options.teamcolor2)
-		},
-		timeStamp:
-		{
-			value: Date.now()
-		},
-		beamOff:
-		{
-			value: false
-		},
-		beamOffTime:
-		{
-			inProgress: false,
-			startTime: Date.now(),
-			value: 0.0
-		}
-	};
-
-let team3KnightMaterial = new THREE.ShaderMaterial(
-	{
-		vertexShader:
-			document
-			.getElementById("teamcolorVertexShader")
-			.textContent,
-		fragmentShader:
-			document
-			.getElementById("teamcolorFragmentShader")
-			.textContent,
-		uniforms: team3knightUniforms,
-		// wireframe: true
-	}
-);
-*/
 
 init();
 
@@ -323,9 +242,13 @@ function init()
 
 	if (debugMode)
 	{
-		let pointLightHelper = new THREE.PointLightHelper( pointLight, 10 );
+		let pointLightHelper = new THREE.PointLightHelper(
+			pointLight,
+			10 );
 		shaderExampleScene.add( pointLightHelper );
-		let hemiLightHelper = new THREE.HemisphereLightHelper( hemiLight, 10 );
+		let hemiLightHelper = new THREE.HemisphereLightHelper(
+			hemiLight,
+			10 );
 		shaderExampleScene.add( hemiLightHelper );
 		let AxisHelper = new THREE.AxisHelper(500);
 		shaderExampleScene.add( AxisHelper );
@@ -406,25 +329,6 @@ function init()
 		shaderExampleScene.add(object);
 	});
 
-	/*
-	objFile = "objects/customObjs/kenneyKnight/knightRed.obj";
-	loader.load( objFile, function( object )
-	{
-		object.children.forEach( function (obj, index)
-		{
-			obj.material = team3KnightMaterial;
-			obj.position.x = 5;
-			obj.position.z = 15;
-			obj.rotation.y = -Math.PI / 2;
-			obj.teamNumber = 2;
-			objects.push( obj );
-		});
-
-
-		shaderExampleScene.add(object);
-	});
-	*/
-
 	if (debugMode)
 	{
 		let geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -451,7 +355,11 @@ function init()
 	}
 
 	// setup renderer
-	shaderExampleRenderer = new THREE.WebGLRenderer( {antialias: true, alpha: true} );
+	shaderExampleRenderer = new THREE.WebGLRenderer(
+		{
+			antialias: true,
+			alpha: true
+		});
 	shaderExampleRenderer.setPixelRatio( window.devicePixelRatio );
 	shaderExampleRenderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( shaderExampleRenderer.domElement );
@@ -615,25 +523,25 @@ function onContextMenu ( event ){ event.preventDefault();}
 
 function onMouseMove( event )
 {
-		let movementX = event.movementX
-			|| event.mozMovementX
-			|| event.webkitMovementX
-			|| 0;
-		let movementY = event.movementY
-			|| event.mozMovementY
-			|| event.webkitMovementY
-			|| 0;
+	let movementX = event.movementX
+		|| event.mozMovementX
+		|| event.webkitMovementX
+		|| 0;
+	let movementY = event.movementY
+		|| event.mozMovementY
+		|| event.webkitMovementY
+		|| 0;
 
-		if (enableTurnCamera == true)
-		{
-			// yes they are inverted and this needs to be
-			turnX += movementY * -0.0035;
-			turnY += movementX * -0.005;
-		}
-		if(enableTurn == true)
-		{
-			panoXTurn += movementX * -0.002;
-		}
+	if (enableTurnCamera == true)
+	{
+		// yes they are inverted and this needs to be
+		turnX += movementY * -0.0035;
+		turnY += movementX * -0.005;
+	}
+	if(enableTurn == true)
+	{
+		panoXTurn += movementX * -0.002;
+	}
 }
 
 function onMouseDown( event )
@@ -669,6 +577,7 @@ function onClick  ( event )
 function startBeam( object, timeToLiveMS )
 {
 	let currentTime = Date.now();
+
 	// set startvalues first time it is run
 	if (object.material.uniforms.beamOffTime.inProgress == false)
 	{
@@ -679,7 +588,8 @@ function startBeam( object, timeToLiveMS )
 	}
 
 	// stop if max is reached
-	if (currentTime > object.material.uniforms.beamOffTime.startTime + timeToLiveMS)
+	if (currentTime >
+		object.material.uniforms.beamOffTime.startTime + timeToLiveMS)
 	{
 		object.material.uniforms.beamOffTime.inProgress = false;
 		object.material.uniforms.beamOffTime.value = 0.0;
@@ -687,16 +597,9 @@ function startBeam( object, timeToLiveMS )
 		return;
 	}
 
-	// set current beamOffTime
-	/*
-	object.material.uniforms.beamOffTime.value = Math.lerp(
-		0.0,
-		Math.PI / 2,
-		(currentTime - object.material.uniforms.beamOffTime.startTime) / timeToLiveMS);
-	console.log((currentTime - object.material.uniforms.beamOffTime.startTime), timeToLiveMS);
-	*/
-
-	object.material.uniforms.beamOffTime.value = (currentTime - object.material.uniforms.beamOffTime.startTime) / timeToLiveMS;
+	object.material.uniforms.beamOffTime.value =
+		(currentTime - object.material.uniforms.beamOffTime.startTime)
+		/ timeToLiveMS;
 
 	setTimeout( function()
 	{
@@ -710,6 +613,7 @@ Math.lerp = function (value1, value2, amount)
 	amount = amount > 1 ? 1 : amount;
 	return value1 + (value2 - value1) * amount;
 };
+
 </script>
 </body>
 </html>

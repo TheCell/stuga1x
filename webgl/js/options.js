@@ -25,7 +25,11 @@ window.onload = function()
 			if (element.material.type == "ShaderMaterial"
 				&& element.teamNumber == 1)
 			{
-				element.material.uniforms.teamcolor.value = new THREE.Color(options.teamcolor1);
+				element
+					.material
+					.uniforms
+					.teamcolor
+					.value = new THREE.Color(options.teamcolor1);
 			}
 		});
 	});
@@ -37,7 +41,11 @@ window.onload = function()
 			if (element.material.type == "ShaderMaterial"
 				&& element.teamNumber == 2)
 			{
-				element.material.uniforms.teamcolor.value = new THREE.Color(options.teamcolor2);
+				element
+					.material
+					.uniforms
+					.teamcolor
+					.value = new THREE.Color(options.teamcolor2);
 			}
 		});
 	});
