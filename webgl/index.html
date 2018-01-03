@@ -33,6 +33,7 @@
 	varying vec2 vUv;
 	uniform int timeStamp;
 	uniform bool beamOff;
+	uniform float beamOffTime;
 
 	void main()
 	{
@@ -44,7 +45,7 @@
 		{
 			posx = position.x * sin(mod(float(timeStamp) * 0.001, 3.0));
 			posz = position.z * sin(mod(float(timeStamp) * 0.001, 3.0));
-			posy = position.y * sin(mod(float(timeStamp) * 0.001, 3.0));
+			posy = position.y * sin(mod(float(timeStamp) * 0.001, 3.0)) * 1.5;
 		}
 		vec4 modelViewPosition = modelViewMatrix * vec4(posx, posy, posz, 1.0);
 		gl_Position = projectionMatrix * modelViewPosition;
@@ -56,6 +57,7 @@
 	uniform vec3 teamcolor;
 	uniform int timeStamp;
 	uniform bool beamOff;
+	uniform float beamOffTime;
 
 	varying vec2 vUv;
 
@@ -69,6 +71,7 @@
 		{
 			fragColor.a = fragColor.a * abs(sin(float(timeStamp) * 0.001) + 0.2);
 		}
+		// interpolate teamcolor
 		fragColor.r = fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
 		fragColor.g = fragColor.g * fragColor.a + teamcolor.g * ( 1.0 - fragColor.a);
 		fragColor.b = fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
@@ -125,7 +128,11 @@ let team1KnightUniforms = {
 		},
 		beamOff:
 		{
-			value: true
+			value: false
+		},
+		beamOffTime:
+		{
+			value: 0.0
 		}
 	};
 
@@ -163,6 +170,10 @@ let team2knightUniforms = {
 		beamOff:
 		{
 			value: false
+		},
+		beamOffTime:
+		{
+			value: 0.0
 		}
 	};
 
@@ -539,6 +550,45 @@ function onClick  ( event )
 		}
 	}
 }
+
+function startBeam( material, timeToLiveMS )
+{
+	// set startvalues first time it is run
+	if (material.uniforms.beamOffTime.value == 0.0)
+	{
+		material.uniforms.beamOff.value = true;
+		material.uniforms.beamOffTime.startTime = Date.now();
+		material.uniforms.beamOffTime.value = 0.0;
+	}
+
+	// stop if max is reached
+	console.log(Date.now() > material.uniforms.beamOffTime.startTime + timeToLiveMS);
+
+	if (Date.now() > material.uniforms.beamOffTime.startTime + timeToLiveMS)
+	{
+		material.uniforms.beamOffTime.value = 0.0;
+		material.uniforms.beamOff.value = false;
+		return;
+	}
+
+	// set current beamOffTime
+	material.uniforms.beamOffTime.value = Math.lerp(
+		0.0,
+		Math.PI / 2,
+		material.uniforms.beamOffTime.startTime / timeToLiveMS);
+
+	setTimeout( function()
+	{
+		startBeam(material, timeToLiveMS);
+	});
+}
+
+Math.lerp = function (value1, value2, amount)
+{
+	amount = amount < 0 ? 0 : amount;
+	amount = amount > 1 ? 1 : amount;
+	return value1 + (value2 - value1) * amount;
+};
 </script>
 </body>
 </html>
