@@ -31,6 +31,7 @@
 <script type="x-shader/x-vertex" id="teamcolorVertexShader">
 	precision mediump float;
 	varying vec2 vUv;
+	varying vec3 vertexWorldPos;
 	uniform int timeStamp;
 	uniform bool beamOff;
 	uniform float beamOffTime;
@@ -38,6 +39,8 @@
 	void main()
 	{
 		vUv = uv;
+		vertexWorldPos = position;
+
 		float posx = position.x;
 		float posy = position.y;
 		float posz = position.z;
@@ -63,6 +66,9 @@
 	uniform int timeStamp;
 	uniform bool beamOff;
 	uniform float beamOffTime;
+	uniform bool isHologramm;
+	uniform float hologrammOffset;
+	varying vec3 vertexWorldPos;
 
 	varying vec2 vUv;
 
@@ -73,6 +79,7 @@
 		{
 			fragColor.a = fragColor.a * sin(1.0 - beamOffTime);
 		}
+
 		// interpolate teamcolor
 		fragColor.r =
 			fragColor.r * fragColor.a + teamcolor.r * ( 1.0 - fragColor.a);
@@ -81,6 +88,40 @@
 		fragColor.b =
 			fragColor.b * fragColor.a + teamcolor.b * ( 1.0 - fragColor.a);
 		fragColor.a = 1.0;
+
+		if (isHologramm)
+		{
+			// fragColor.a = step(0.5, sin(float(timeStamp) / 100.0 * gl_FragCoord.y * 0.0000000004));
+			//fragColor.a = step(0.5, sin(gl_FragCoord.y * 0.4));
+			//fragColor.r = teamcolor.r * sin((gl_FragCoord.y + 0.2) * 0.4);
+			//fragColor.g = teamcolor.g * sin((gl_FragCoord.y + 0.2) * 0.4);
+			//fragColor.b = teamcolor.b * sin((gl_FragCoord.y + 0.2) * 0.4);
+			/*
+			if (step(0.5, sin((gl_FragCoord.y + 0.2) * 0.4)) == 1.0)
+			{
+				fragColor.r = teamcolor.r * sin((gl_FragCoord.y + 0.2) * 0.4);
+				fragColor.g = teamcolor.g * sin((gl_FragCoord.y + 0.2) * 0.4);
+				fragColor.b = teamcolor.b * sin((gl_FragCoord.y + 0.2) * 0.4);
+			}
+			*/
+			float lineVal = sin(
+				(gl_FragCoord.y + M_PI * hologrammOffset * 100.0)
+				* 0.3);
+			float lineVal2 = sin(
+				(gl_FragCoord.y + (M_PI + M_PI / 2.0) * hologrammOffset * 100.0)
+				* 0.3);
+			float lineVal3 = sin(
+				(gl_FragCoord.y + (M_PI / 2.0) * hologrammOffset * 100.0)
+				* 0.3);
+			float lineVal4 = sin(
+				(gl_FragCoord.y + (M_PI * mix(-1.0, 1.0, hologrammOffset)) * 10.0)
+				* 0.1);
+
+			fragColor.r = mix(fragColor.r, teamcolor.r, max(0.0, lineVal4));
+			fragColor.g = mix(fragColor.g, teamcolor.g, max(0.0, lineVal4));
+			fragColor.b = mix(fragColor.b, teamcolor.b, max(0.0, lineVal4));
+			fragColor.a = 0.8;
+		}
 
 		gl_FragColor = fragColor;
 	}
@@ -94,9 +135,9 @@ let userCamera;
 let shaderExampleScene;
 let shaderExampleRenderer;
 let moveX,moveY,moveZ;
-let moveSpeedX = 1;
-let moveSpeedY = 1;
-let moveSpeedZ = 1;
+let moveSpeedX = 0.3;
+let moveSpeedY = 0.3;
+let moveSpeedZ = 0.3;
 let posXValue = -4;
 let posYValue = 9;
 let posZValue = 2;
@@ -141,7 +182,11 @@ let team1KnightUniforms = {
 		},
 		isHologramm:
 		{
-			value: false
+			value: options.team1hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
 		}
 	};
 
@@ -156,11 +201,12 @@ let team1KnightMaterial = new THREE.ShaderMaterial(
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
 		uniforms: team1KnightUniforms,
+		transparent: true
 		// wireframe: true
 	}
 );
 
-let team2knightUniforms = {
+let team2KnightUniforms = {
 		textureKnight:
 		{
 			type: "t",
@@ -188,7 +234,11 @@ let team2knightUniforms = {
 		},
 		isHologramm:
 		{
-			value: false
+			value: options.team2hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
 		}
 	};
 
@@ -202,7 +252,8 @@ let team2KnightMaterial = new THREE.ShaderMaterial(
 			document
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
-		uniforms: team2knightUniforms,
+		uniforms: team2KnightUniforms,
+		transparent: true
 		// wireframe: true
 	}
 );
@@ -447,7 +498,9 @@ function onKeyUp(event)
 function animate()
 {
 	team1KnightUniforms.timeStamp.value = Date.now();
-	team2knightUniforms.timeStamp.value = Date.now();
+	team2KnightUniforms.timeStamp.value = Date.now();
+	team1KnightUniforms.hologrammOffset.value = Date.now() / 10000 % 1;
+	team2KnightUniforms.hologrammOffset.value = Date.now() / 10000 % 1;
 	shaderExampleRenderer.render( shaderExampleScene, userCamera );
 
 	if (debugMode)

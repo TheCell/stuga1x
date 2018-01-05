@@ -28,7 +28,9 @@ let options =
 				return;
 			}
 		}
-	}
+	},
+	team1hologramm: true,
+	team2hologramm: false
 }
 
 window.onload = function()
@@ -45,6 +47,8 @@ window.onload = function()
 	animationsFolder.add(options, "beamOffTeam1");
 	animationsFolder.add(options, "beamOffTeam2");
 	animationsFolder.add(options, "beamOffTime").min(10).max(5000);
+	let team1hologramm = animationsFolder.add(options, "team1hologramm");
+	let team2hologramm = animationsFolder.add(options, "team2hologramm");
 
 	colorFolder.open();
 	animationsFolder.open();
@@ -78,6 +82,39 @@ window.onload = function()
 					.uniforms
 					.teamcolor
 					.value = new THREE.Color(options.teamcolor2);
+			}
+		});
+	});
+
+
+	team1hologramm.onChange( function (value)
+	{
+		objects.forEach(function (element, index, arr)
+		{
+			if (element.material.type == "ShaderMaterial"
+				&& element.teamNumber == 1)
+			{
+				element
+					.material
+					.uniforms
+					.isHologramm
+					.value = options.team1hologramm;
+			}
+		});
+	});
+
+	team2hologramm.onChange( function (value)
+	{
+		objects.forEach(function (element, index, arr)
+		{
+			if (element.material.type == "ShaderMaterial"
+				&& element.teamNumber == 2)
+			{
+				element
+					.material
+					.uniforms
+					.isHologramm
+					.value = options.team2hologramm;
 			}
 		});
 	});
