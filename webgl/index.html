@@ -362,6 +362,215 @@ let team2KnightMaterial = new THREE.ShaderMaterial(
 	}
 );
 
+// ENEMY Material (copy of the above)
+let team1EnemyKnightUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/knight/Myknight.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor1)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team1Enemyhologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+	};
+
+let team1EnemyKnightMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team1EnemyKnightUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let car1EnemyUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/cars/Car_05.png"),
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor2)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team2Enemyhologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+	};
+
+let car1EnemyMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: car1EnemyUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let car2EnemyUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/cars/car1.png"),
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor1)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team1Enemyhologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+	};
+
+let car2EnemyMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: car2EnemyUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let team2EnemyKnightUniforms = {
+	texture:
+	{
+		type: "t",
+		value: THREE
+			.ImageUtils
+			.loadTexture("objects/customObjs/knight/Myknight.png")
+	},
+	teamcolor:
+	{
+		value: new THREE.Color(options.teamcolor2)
+	},
+	timeStamp:
+	{
+		value: Date.now()
+	},
+	beamOff:
+	{
+		value: false
+	},
+	beamOffTime:
+	{
+		inProgress: false,
+		startTime: Date.now(),
+		value: 0.0
+	},
+	isHologramm:
+	{
+		value: options.team2Enemyhologramm
+	},
+	hologrammOffset:
+	{
+		value: 0.0
+	}
+};
+
+let team2EnemyKnightMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team2EnemyKnightUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
 init();
 
 function init()
@@ -509,6 +718,116 @@ function init()
 			obj.position.x = 30;
 			obj.position.z = 10;
 			obj.teamNumber = 1;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	// setup enemy team
+	objFile = "objects/customObjs/knight/Myknight.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team1EnemyKnightMaterial;
+			obj.position.x = -5;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 1;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2EnemyKnightMaterial;
+			obj.position.x = -5;
+			obj.position.z = 30;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 2;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team1EnemyKnightMaterial;
+			obj.position.x = -10;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 1;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2EnemyKnightMaterial;
+			obj.position.x = -10;
+			obj.position.z = 30;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 2;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	objFile = "objects/customObjs/cars/camion.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = car1EnemyMaterial;
+			obj.position.x = -30;
+			obj.position.z = 30;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 2;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	objFile = "objects/customObjs/cars/car1.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = car2EnemyMaterial;
+			obj.position.x = -30;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 1;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
 			objects.push( obj );
 		});
 
@@ -803,6 +1122,124 @@ Math.lerp = function (value1, value2, amount)
 	return value1 + (value2 - value1) * amount;
 };
 
+function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
+
+/**
+ * Converts an RGB color value to HSV. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes r, g, and b are contained in the set [0, 255] and
+ * returns h, s, and v in the set [0, 1].
+ *
+ * @param   Number  r       The red color value
+ * @param   Number  g       The green color value
+ * @param   Number  b       The blue color value
+ * @return  Array           The HSV representation
+ */
+function rgbToHsv(r, g, b)
+{
+	r /= 255, g /= 255, b /= 255;
+
+	var max = Math.max(r, g, b), min = Math.min(r, g, b);
+	var h, s, v = max;
+
+	var d = max - min;
+	s = max == 0 ? 0 : d / max;
+
+	if (max == min)
+	{
+		h = 0; // achromatic
+	}
+	else
+	{
+		switch (max)
+		{
+			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / d + 2; break;
+			case b: h = (r - g) / d + 4; break;
+		}
+
+		h /= 6;
+	}
+
+	return [ h, s, v ];
+}
+
+/**
+ * Converts an HSV color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
+ * Assumes h, s, and v are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  v       The value
+ * @return  Array           The RGB representation
+ */
+function hsvToRgb(h, s, v)
+{
+	var r, g, b;
+
+	var i = Math.floor(h * 6);
+	var f = h * 6 - i;
+	var p = v * (1 - s);
+	var q = v * (1 - f * s);
+	var t = v * (1 - (1 - f) * s);
+
+	switch (i % 6)
+	{
+		case 0: r = v, g = t, b = p; break;
+		case 1: r = q, g = v, b = p; break;
+		case 2: r = p, g = v, b = t; break;
+		case 3: r = p, g = q, b = v; break;
+		case 4: r = t, g = p, b = v; break;
+		case 5: r = v, g = p, b = q; break;
+	}
+
+	return [ r * 255, g * 255, b * 255 ];
+}
+
+/**
+ * Converts an RGB color value to HSL. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes r, g, and b are contained in the set [0, 255] and
+ * returns h, s, and l in the set [0, 1].
+ *
+ * @param   Number  r       The red color value
+ * @param   Number  g       The green color value
+ * @param   Number  b       The blue color value
+ * @return  Array           The HSL representation
+ */
+function rgbToHsl(r, g, b)
+{
+	r /= 255, g /= 255, b /= 255;
+
+	var max = Math.max(r, g, b), min = Math.min(r, g, b);
+	var h, s, l = (max + min) / 2;
+
+	if (max == min)
+	{
+		h = s = 0; // achromatic
+	}
+	else
+	{
+		var d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+		switch (max)
+		{
+			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / d + 2; break;
+			case b: h = (r - g) / d + 4; break;
+		}
+
+		h /= 6;
+	}
+
+	return [ h, s, l ];
+}
 </script>
 </body>
 </html>
