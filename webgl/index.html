@@ -61,7 +61,7 @@
 <script type="x-shader/x-fragment" id="teamcolorFragmentShader">
 	precision mediump float;
 	#define M_PI 3.1415926535897932384626433832795
-	uniform sampler2D textureKnight;
+	uniform sampler2D texture;
 	uniform vec3 teamcolor;
 	uniform int timeStamp;
 	uniform bool beamOff;
@@ -74,7 +74,7 @@
 
 	void main()
 	{
-		vec4 fragColor = texture2D(textureKnight, vUv);
+		vec4 fragColor = texture2D(texture, vUv);
 		if (beamOff)
 		{
 			fragColor.a = fragColor.a * sin(1.0 - beamOffTime);
@@ -138,14 +138,14 @@ let moveX,moveY,moveZ;
 let moveSpeedX = 0.3;
 let moveSpeedY = 0.3;
 let moveSpeedZ = 0.3;
-let posXValue = -4;
-let posYValue = 9;
-let posZValue = 2;
+let posXValue = -10;
+let posYValue = 17;
+let posZValue = 4;
 let moveXMinus, moveYMinus, moveZMinus;
 let enableTurn = false;
 let enableTurnCamera = false;
-let turnX = -0.60;
-let turnY = -2.00;
+let turnX = -0.530;
+let turnY = -2.10;
 let turnZ = 0.00;
 let panoXTurn = 3.14;
 
@@ -155,7 +155,7 @@ let objects = []; // all objects that are interactable;
 let debugMode = true;
 
 let team1KnightUniforms = {
-		textureKnight:
+		texture:
 		{
 			type: "t",
 			value: THREE
@@ -206,13 +206,13 @@ let team1KnightMaterial = new THREE.ShaderMaterial(
 	}
 );
 
-let team2KnightUniforms = {
-		textureKnight:
+let car1Uniforms = {
+		texture:
 		{
 			type: "t",
 			value: THREE
 				.ImageUtils
-				.loadTexture("objects/customObjs/knight/Myknight.png")
+				.loadTexture("objects/customObjs/cars/Car_05.png"),
 		},
 		teamcolor:
 		{
@@ -241,6 +241,110 @@ let team2KnightUniforms = {
 			value: 0.0
 		}
 	};
+
+let car1Material = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: car1Uniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let car2Uniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/cars/car1.png"),
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor1)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team1hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+	};
+
+let car2Material = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: car2Uniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let team2KnightUniforms = {
+	texture:
+	{
+		type: "t",
+		value: THREE
+			.ImageUtils
+			.loadTexture("objects/customObjs/knight/Myknight.png")
+	},
+	teamcolor:
+	{
+		value: new THREE.Color(options.teamcolor2)
+	},
+	timeStamp:
+	{
+		value: Date.now()
+	},
+	beamOff:
+	{
+		value: false
+	},
+	beamOffTime:
+	{
+		inProgress: false,
+		startTime: Date.now(),
+		value: 0.0
+	},
+	isHologramm:
+	{
+		value: options.team2hologramm
+	},
+	hologrammOffset:
+	{
+		value: 0.0
+	}
+};
 
 let team2KnightMaterial = new THREE.ShaderMaterial(
 	{
@@ -328,7 +432,7 @@ function init()
 		{
 			obj.material = team1KnightMaterial;
 			obj.position.x = 5;
-			obj.position.z = 5;
+			obj.position.z = 10;
 			obj.teamNumber = 1;
 			objects.push( obj );
 		});
@@ -342,7 +446,7 @@ function init()
 		{
 			obj.material = team2KnightMaterial;
 			obj.position.x = 5;
-			obj.position.z = 10;
+			obj.position.z = 30;
 			obj.teamNumber = 2;
 			objects.push( obj );
 		});
@@ -357,7 +461,7 @@ function init()
 		{
 			obj.material = team1KnightMaterial;
 			obj.position.x = 10;
-			obj.position.z = 5;
+			obj.position.z = 10;
 			obj.teamNumber = 1;
 			objects.push( obj );
 		});
@@ -371,8 +475,40 @@ function init()
 		{
 			obj.material = team2KnightMaterial;
 			obj.position.x = 10;
-			obj.position.z = 10;
+			obj.position.z = 30;
 			obj.teamNumber = 2;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	objFile = "objects/customObjs/cars/camion.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = car1Material;
+			obj.position.x = 30;
+			obj.position.z = 30;
+			obj.teamNumber = 2;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
+	objFile = "objects/customObjs/cars/car1.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = car2Material;
+			obj.position.x = 30;
+			obj.position.z = 10;
+			obj.teamNumber = 1;
 			objects.push( obj );
 		});
 

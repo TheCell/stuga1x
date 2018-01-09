@@ -11,9 +11,7 @@ let options =
 		{
 			if (objects[i].teamNumber == 1)
 			{
-				console.log("iteration nr " + i);
 				startBeam( objects[i], options.beamOffTime );
-				return;
 			}
 		}
 	},
@@ -23,9 +21,7 @@ let options =
 		{
 			if (objects[i].teamNumber == 2)
 			{
-				console.log("iteration nr " + i);
 				startBeam( objects[i], options.beamOffTime );
-				return;
 			}
 		}
 	},
