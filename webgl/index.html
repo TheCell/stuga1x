@@ -91,19 +91,6 @@
 
 		if (isHologramm)
 		{
-			// fragColor.a = step(0.5, sin(float(timeStamp) / 100.0 * gl_FragCoord.y * 0.0000000004));
-			//fragColor.a = step(0.5, sin(gl_FragCoord.y * 0.4));
-			//fragColor.r = teamcolor.r * sin((gl_FragCoord.y + 0.2) * 0.4);
-			//fragColor.g = teamcolor.g * sin((gl_FragCoord.y + 0.2) * 0.4);
-			//fragColor.b = teamcolor.b * sin((gl_FragCoord.y + 0.2) * 0.4);
-			/*
-			if (step(0.5, sin((gl_FragCoord.y + 0.2) * 0.4)) == 1.0)
-			{
-				fragColor.r = teamcolor.r * sin((gl_FragCoord.y + 0.2) * 0.4);
-				fragColor.g = teamcolor.g * sin((gl_FragCoord.y + 0.2) * 0.4);
-				fragColor.b = teamcolor.b * sin((gl_FragCoord.y + 0.2) * 0.4);
-			}
-			*/
 			float lineVal = sin(
 				(gl_FragCoord.y + M_PI * hologrammOffset * 100.0)
 				* 0.3);
