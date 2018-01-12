@@ -822,6 +822,25 @@ function init()
 		shaderExampleScene.add(object);
 	});
 
+	objFile = "objects/customObjs/warlock/warlock.obj";
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = car2EnemyMaterial;
+			obj.position.x = -30;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI;
+			obj.teamNumber = 1;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+
+		shaderExampleScene.add(object);
+	});
+
 	if (debugMode)
 	{
 		let geometry = new THREE.BoxGeometry( 1, 1, 1 );

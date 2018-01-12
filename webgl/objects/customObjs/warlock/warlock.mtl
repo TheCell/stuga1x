@@ -1,0 +1,79 @@
+# Blender MTL File: 'None'
+# Material Count: 7
+
+newmtl warlock2:warlock_newSG_mat
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_color.tga
+
+newmtl warlock_bag:lowSG_mat
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_bag_color.tga
+
+newmtl warlock_bracers:lowSG_mat
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_bracers_color.tga
+
+newmtl warlock_cape:lowSG_mat
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_cape_color.tga
+
+newmtl warlock_robe4:lowSG_mat
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_robe_color.tga
+
+newmtl warlock_shoulder:lowSG_mat.001
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_shoulder_color.tga
+
+newmtl warlock_shoulder:lowSG_mat.002
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd warlock_shoulder_color.tga
