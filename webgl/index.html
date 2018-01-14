@@ -714,7 +714,7 @@ let team1EnemyWarlockMaterial = new THREE.ShaderMaterial(
 			document
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
-		uniforms: team1WarlockUniforms,
+		uniforms: team1EnemyWarlockUniforms,
 		transparent: true
 		// wireframe: true
 	}
@@ -766,7 +766,7 @@ let team2EnemyWarlockMaterial = new THREE.ShaderMaterial(
 			document
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
-		uniforms: team2WarlockUniforms,
+		uniforms: team2EnemyWarlockUniforms,
 		transparent: true
 		// wireframe: true
 	}
@@ -1050,7 +1050,6 @@ function init()
 		shaderExampleScene.add(object);
 	});
 
-
 	loader.load( objFile, function( object )
 	{
 		object.children.forEach( function (obj, index)
@@ -1085,23 +1084,22 @@ function init()
 		shaderExampleScene.add(object);
 	});
 
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2EnemyWarlockMaterial;
+			obj.position.x = -20;
+			obj.position.z = 30;
+			obj.rotation.y = Math.PI / 2;
+			obj.teamNumber = 2;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
 
-	// loader.load( objFile, function( object )
-	// {
-	// 	object.children.forEach( function (obj, index)
-	// 	{
-	// 		obj.material = team2EnemyWarlockMaterial;
-	// 		obj.position.x = -20;
-	// 		obj.position.z = 30;
-	// 		obj.rotation.y = Math.PI / 2;
-	// 		obj.teamNumber = 2;
-	// 		obj.isEnemy = true;
-	// 		obj.visible = options.enableEnemyTeam;
-	// 		objects.push( obj );
-	// 	});
-
-	// 	shaderExampleScene.add(object);
-	// });
+		shaderExampleScene.add(object);
+	});
 
 	if (debugMode)
 	{
