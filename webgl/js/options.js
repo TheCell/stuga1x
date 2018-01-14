@@ -3,7 +3,7 @@ let options =
 {
 	teamcolor1: "#ff9500",
 	teamcolor2: "#49CC36",
-	enableEnemyTeam: true,
+	enableEnemyTeam: false,
 	beamOffTime: 1000,
 	beamOffTeam1: function ()
 	{
@@ -26,7 +26,7 @@ let options =
 			}
 		}
 	},
-	team1hologramm: true,
+	team1hologramm: false,
 	team2hologramm: false,
 	team1Enemyhologramm: false,
 	team2Enemyhologramm: false,
