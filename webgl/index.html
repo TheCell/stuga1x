@@ -180,7 +180,7 @@ let team1KnightUniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let team1KnightMaterial = new THREE.ShaderMaterial(
 	{
@@ -232,7 +232,7 @@ let team1WarlockUniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let team1WarlockMaterial = new THREE.ShaderMaterial(
 	{
@@ -245,6 +245,58 @@ let team1WarlockMaterial = new THREE.ShaderMaterial(
 			.getElementById("teamcolorFragmentShader")
 			.textContent,
 		uniforms: team1WarlockUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let team2WarlockUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/warlockBigger/warlokBakedAlpha.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor2)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team2hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+};
+
+let team2WarlockMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team2WarlockUniforms,
 		transparent: true
 		// wireframe: true
 	}
@@ -284,7 +336,7 @@ let car1Uniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let car1Material = new THREE.ShaderMaterial(
 	{
@@ -336,7 +388,7 @@ let car2Uniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let car2Material = new THREE.ShaderMaterial(
 	{
@@ -441,7 +493,7 @@ let team1EnemyKnightUniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let team1EnemyKnightMaterial = new THREE.ShaderMaterial(
 	{
@@ -493,7 +545,7 @@ let car1EnemyUniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let car1EnemyMaterial = new THREE.ShaderMaterial(
 	{
@@ -545,7 +597,7 @@ let car2EnemyUniforms = {
 		{
 			value: 0.0
 		}
-	};
+};
 
 let car2EnemyMaterial = new THREE.ShaderMaterial(
 	{
@@ -612,6 +664,110 @@ let team2EnemyKnightMaterial = new THREE.ShaderMaterial(
 		uniforms: team2EnemyKnightUniforms,
 		transparent: true,
 		side: THREE.BackSide
+		// wireframe: true
+	}
+);
+
+let team1EnemyWarlockUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/warlockBigger/warlokBakedAlpha.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor1)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team1hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+};
+
+let team1EnemyWarlockMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team1WarlockUniforms,
+		transparent: true
+		// wireframe: true
+	}
+);
+
+let team2EnemyWarlockUniforms = {
+		texture:
+		{
+			type: "t",
+			value: THREE
+				.ImageUtils
+				.loadTexture("objects/customObjs/warlockBigger/warlokBakedAlpha.png")
+		},
+		teamcolor:
+		{
+			value: new THREE.Color(options.teamcolor2)
+		},
+		timeStamp:
+		{
+			value: Date.now()
+		},
+		beamOff:
+		{
+			value: false
+		},
+		beamOffTime:
+		{
+			inProgress: false,
+			startTime: Date.now(),
+			value: 0.0
+		},
+		isHologramm:
+		{
+			value: options.team2hologramm
+		},
+		hologrammOffset:
+		{
+			value: 0.0
+		}
+};
+
+let team2EnemyWarlockMaterial = new THREE.ShaderMaterial(
+	{
+		vertexShader:
+			document
+			.getElementById("teamcolorVertexShader")
+			.textContent,
+		fragmentShader:
+			document
+			.getElementById("teamcolorFragmentShader")
+			.textContent,
+		uniforms: team2WarlockUniforms,
+		transparent: true
 		// wireframe: true
 	}
 );
@@ -744,7 +900,7 @@ function init()
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = car1Material;
-			obj.position.x = 30;
+			obj.position.x = 40;
 			obj.position.z = 30;
 			obj.teamNumber = 2;
 			objects.push( obj );
@@ -760,7 +916,7 @@ function init()
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = car2Material;
-			obj.position.x = 30;
+			obj.position.x = 40;
 			obj.position.z = 10;
 			obj.teamNumber = 1;
 			objects.push( obj );
@@ -803,7 +959,6 @@ function init()
 			objects.push( obj );
 		});
 
-
 		shaderExampleScene.add(object);
 	});
 
@@ -838,7 +993,6 @@ function init()
 			objects.push( obj );
 		});
 
-
 		shaderExampleScene.add(object);
 	});
 
@@ -848,7 +1002,7 @@ function init()
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = car1EnemyMaterial;
-			obj.position.x = -30;
+			obj.position.x = -40;
 			obj.position.z = 30;
 			obj.rotation.y = Math.PI;
 			obj.teamNumber = 2;
@@ -856,7 +1010,6 @@ function init()
 			obj.visible = options.enableEnemyTeam;
 			objects.push( obj );
 		});
-
 
 		shaderExampleScene.add(object);
 	});
@@ -867,15 +1020,14 @@ function init()
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = car2EnemyMaterial;
-			obj.position.x = -30;
+			obj.position.x = -40;
 			obj.position.z = 10;
 			obj.rotation.y = Math.PI;
 			obj.teamNumber = 1;
-			obj.isEnemy = true;
+			obj.isEnemy = false;
 			obj.visible = options.enableEnemyTeam;
 			objects.push( obj );
 		});
-
 
 		shaderExampleScene.add(object);
 	});
@@ -886,9 +1038,9 @@ function init()
 		object.children.forEach( function (obj, index)
 		{
 			obj.material = team1WarlockMaterial;
-			obj.position.x = 0;
-			obj.position.z = 0;
-			obj.rotation.y = Math.PI;
+			obj.position.x = 20;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI * 3/2;
 			obj.teamNumber = 1;
 			obj.isEnemy = false;
 			obj.visible = true;
@@ -897,6 +1049,59 @@ function init()
 
 		shaderExampleScene.add(object);
 	});
+
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team2WarlockMaterial;
+			obj.position.x = 20;
+			obj.position.z = 30;
+			obj.rotation.y = Math.PI * 3/2;
+			obj.teamNumber = 2;
+			obj.isEnemy = false;
+			obj.visible = true;
+			objects.push( obj );
+		});
+
+		shaderExampleScene.add(object);
+	});
+
+	loader.load( objFile, function( object )
+	{
+		object.children.forEach( function (obj, index)
+		{
+			obj.material = team1EnemyWarlockMaterial;
+			obj.position.x = -20;
+			obj.position.z = 10;
+			obj.rotation.y = Math.PI / 2;
+			obj.teamNumber = 1;
+			obj.isEnemy = true;
+			obj.visible = options.enableEnemyTeam;
+			objects.push( obj );
+		});
+
+		shaderExampleScene.add(object);
+	});
+
+
+	// loader.load( objFile, function( object )
+	// {
+	// 	object.children.forEach( function (obj, index)
+	// 	{
+	// 		obj.material = team2EnemyWarlockMaterial;
+	// 		obj.position.x = -20;
+	// 		obj.position.z = 30;
+	// 		obj.rotation.y = Math.PI / 2;
+	// 		obj.teamNumber = 2;
+	// 		obj.isEnemy = true;
+	// 		obj.visible = options.enableEnemyTeam;
+	// 		objects.push( obj );
+	// 	});
+
+	// 	shaderExampleScene.add(object);
+	// });
 
 	if (debugMode)
 	{
@@ -1022,6 +1227,9 @@ function animate()
 	car1Uniforms.hologrammOffset.value = Date.now() / 4000 % 1;
 	car2Uniforms.hologrammOffset.value = Date.now() / 4000 % 1;
 	team1WarlockUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	team2WarlockUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	team1EnemyWarlockUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	team2EnemyWarlockUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
 	shaderExampleRenderer.render( shaderExampleScene, userCamera );
 
 	if (debugMode)
