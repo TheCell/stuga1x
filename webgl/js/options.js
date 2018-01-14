@@ -56,17 +56,6 @@ window.onload = function()
 	animationsFolder.open();
 
 	// add events
-	enemyTeam.onChange( function (value)
-	{
-		objects.forEach(function (element, index, arr)
-		{
-			if (element.isEnemy)
-			{
-				element.visible = options.enableEnemyTeam;
-			}
-		});
-	});
-
 	teamcolor1.onChange( function (value)
 	{
 		objects.forEach(function (element, index, arr)
@@ -166,6 +155,17 @@ window.onload = function()
 	});
 
 	// Setup enemy callbacks
+	enemyTeam.onChange( function (value)
+	{
+		objects.forEach(function (element, index, arr)
+		{
+			if (element.isEnemy)
+			{
+				element.visible = options.enableEnemyTeam;
+			}
+		});
+	});
+
 	team1Enemyhologramm.onChange( function (value)
 	{
 		objects.forEach(function (element, index, arr)
