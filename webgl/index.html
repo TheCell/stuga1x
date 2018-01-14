@@ -104,9 +104,9 @@
 				(gl_FragCoord.y + (M_PI * mix(-1.0, 1.0, hologrammOffset)) * 10.0)
 				* 0.1);
 
-			fragColor.r = mix(fragColor.r, teamcolor.r, max(0.0, lineVal4));
-			fragColor.g = mix(fragColor.g, teamcolor.g, max(0.0, lineVal4));
-			fragColor.b = mix(fragColor.b, teamcolor.b, max(0.0, lineVal4));
+			fragColor.r = mix(fragColor.r, teamcolor.r, max(0.0, abs(lineVal4)));
+			fragColor.g = mix(fragColor.g, teamcolor.g, max(0.0, abs(lineVal4)));
+			fragColor.b = mix(fragColor.b, teamcolor.b, max(0.0, abs(lineVal4)));
 			fragColor.a = 0.8;
 		}
 
@@ -837,7 +837,6 @@ function init()
 			objects.push( obj );
 		});
 
-
 		shaderExampleScene.add(object);
 	});
 
@@ -960,8 +959,10 @@ function animate()
 {
 	team1KnightUniforms.timeStamp.value = Date.now();
 	team2KnightUniforms.timeStamp.value = Date.now();
-	team1KnightUniforms.hologrammOffset.value = Date.now() / 10000 % 1;
-	team2KnightUniforms.hologrammOffset.value = Date.now() / 10000 % 1;
+	team1KnightUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	team2KnightUniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	car1Uniforms.hologrammOffset.value = Date.now() / 4000 % 1;
+	car2Uniforms.hologrammOffset.value = Date.now() / 4000 % 1;
 	shaderExampleRenderer.render( shaderExampleScene, userCamera );
 
 	if (debugMode)
