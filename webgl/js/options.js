@@ -9,9 +9,9 @@ let options =
 	{
 		for (let i = 0; i < objects.length; i++)
 		{
-			if (objects[i].teamNumber == 1)
+			if (objects[i].teamNumber == 1
+				&& !objects[i].material.uniforms.beamOffTime.inProgress)
 			{
-				console.log("start beam");
 				startBeam( objects[i], options.beamOffTime );
 			}
 		}
@@ -20,7 +20,8 @@ let options =
 	{
 		for (let i = 0; i < objects.length; i++)
 		{
-			if (objects[i].teamNumber == 2)
+			if (objects[i].teamNumber == 2
+				&& !objects[i].material.uniforms.beamOffTime.inProgress)
 			{
 				startBeam( objects[i], options.beamOffTime );
 			}
